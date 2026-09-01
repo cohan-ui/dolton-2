@@ -363,6 +363,131 @@
   }
 
   /* ==========================================================
+     SPACES — accordion view + toggle
+     ========================================================== */
+  const ACC_ORDER = ["horizon", "sol", "lume", "cove", "azure", "lyra"];
+  const accWrap = document.getElementById("spacesAccordion");
+  const cardsWrap = document.getElementById("spacesCards");
+  let spacesViewMode = "cards";
+  let openAccRow = null;
+
+  function buildAccordion() {
+    const frag = document.createDocumentFragment();
+    ACC_ORDER.forEach(key => {
+      const s = SPACES[key];
+      const row = document.createElement("div");
+      row.className = "acc-row";
+      row.id = "acc-" + key;
+      row.dataset.space = key;
+      row.innerHTML = `
+        <button type="button" class="acc-row__head" aria-expanded="false" aria-controls="acc-body-${key}">
+          <span class="acc-row__idx">${s.idx}</span>
+          <span class="acc-row__title-cell">
+            <span class="acc-row__thumb"><img src="${s.img}" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+            <span class="acc-row__name">${s.name}</span>
+          </span>
+          <span class="acc-row__tags" data-acc-tags>${s.tags[currentEventType]}</span>
+          <span class="acc-row__sign" aria-hidden="true">+</span>
+        </button>
+        <div class="acc-row__body" id="acc-body-${key}">
+          <div class="acc-row__inner">
+            <div class="acc-row__media">
+              <img class="lazy-img" src="${s.img}" alt="${s.alt}" loading="lazy" decoding="async">
+              <span class="artist-tag">Artist Impression</span>
+            </div>
+            <div class="acc-row__detail">
+              <p>${s.desc}</p>
+              <div class="cap-grid">${capRows(s)}</div>
+              <div class="acc-row__note">${s.capsConfirmed ? "Capacity shown for confirmed configurations" : "Indicative capacities \u2014 to be confirmed"}</div>
+              <div class="connected"><span class="k">Connected Spaces</span>
+                <div class="chips">${s.connected.map(c => `<span class="chip">${c}</span>`).join("")}</div>
+              </div>
+              <div class="acc-row__actions">
+                <button type="button" class="acc-row__enquire" data-enquire="${key}">Enquire About ${s.name}</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      frag.appendChild(row);
+    });
+    accWrap.appendChild(frag);
+    bindLazy(accWrap);
+  }
+
+  function setAccHeight(body, open) {
+    if (reduceMotion) { body.style.height = open ? "auto" : "0px"; return; }
+    if (open) {
+      body.style.height = body.scrollHeight + "px";
+      body.addEventListener("transitionend", function te(e) {
+        if (e.propertyName !== "height") return;
+        body.style.height = "auto";
+        body.removeEventListener("transitionend", te);
+      });
+    } else {
+      body.style.height = body.scrollHeight + "px";
+      requestAnimationFrame(() => (body.style.height = "0px"));
+    }
+  }
+
+  function openAccordionRow(key, opts = {}) {
+    const row = document.getElementById("acc-" + key);
+    if (!row) return;
+    if (openAccRow && openAccRow !== row) {
+      openAccRow.classList.remove("is-open");
+      openAccRow.querySelector(".acc-row__head").setAttribute("aria-expanded", "false");
+      setAccHeight(openAccRow.querySelector(".acc-row__body"), false);
+    }
+    const body = row.querySelector(".acc-row__body");
+    const opening = !row.classList.contains("is-open");
+    if (!opening && opts.allowClose === false) return;
+    row.classList.toggle("is-open", opening);
+    row.querySelector(".acc-row__head").setAttribute("aria-expanded", String(opening));
+    setAccHeight(body, opening);
+    openAccRow = opening ? row : null;
+    if (opening) {
+      currentSpace = key;
+      userChoseSpace = userChoseSpace || !!opts.byUser;
+      setSelectedStates(key === DEFAULT_SPACE ? "" : key);
+      writePanel(key);
+      syncFormSpace();
+      if (opts.byUser) history.replaceState(null, "", "#space-" + key);
+    }
+  }
+
+  accWrap.addEventListener("click", e => {
+    const enquire = e.target.closest("[data-enquire]");
+    if (enquire) { goToEnquire(enquire.dataset.enquire); return; }
+    const head = e.target.closest(".acc-row__head");
+    if (head) openAccordionRow(head.closest(".acc-row").dataset.space, { byUser: true });
+  });
+
+  function setSpacesView(mode, opts = {}) {
+    if (mode === spacesViewMode && !opts.force) return;
+    spacesViewMode = mode;
+    document.querySelectorAll("#spacesView .seg button").forEach(b => {
+      const on = b.dataset.view === mode;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
+    const showAcc = mode === "accordion";
+    cardsWrap.hidden = showAcc;
+    accWrap.hidden = !showAcc;
+    if (showAcc) {
+      // carry the current selection into the list view
+      openAccordionRow(currentSpace, { allowClose: false });
+      if (hasGsap) ScrollTrigger.refresh();
+    } else {
+      writePanel(currentSpace);
+      setSelectedStates(currentSpace === DEFAULT_SPACE ? "" : currentSpace);
+      if (hasGsap) ScrollTrigger.refresh();
+    }
+  }
+
+  document.querySelectorAll("#spacesView .seg button").forEach(b => {
+    b.addEventListener("click", () => setSpacesView(b.dataset.view));
+  });
+
+  /* ==========================================================
      ENQUIRY FORM — space select + event type
      ========================================================== */
   const spaceSelect = document.getElementById("spaceSelect");
@@ -451,6 +576,9 @@
       grid.querySelectorAll(".space-card").forEach(card => {
         const tags = card.querySelector("[data-space-tags]");
         if (tags) tags.textContent = SPACES[card.dataset.space].tags[type];
+      });
+      accWrap.querySelectorAll(".acc-row").forEach(row => {
+        row.querySelector("[data-acc-tags]").textContent = SPACES[row.dataset.space].tags[type];
       });
     };
 
@@ -726,6 +854,7 @@
      INIT
      ========================================================== */
   buildCards();
+  buildAccordion();
   buildSpaceMenu();
   writePanel(DEFAULT_SPACE);
   bindLazy();

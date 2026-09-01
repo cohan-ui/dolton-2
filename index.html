@@ -109,8 +109,16 @@
       <p class="overline overline--light" data-reveal>Explore the Spaces</p>
       <h2 data-split>Six spaces, one waterfront address.</h2>
     </div>
+    <div class="spaces-view" id="spacesView" role="group" aria-label="Spaces layout" data-reveal>
+      <span class="spaces-view__label">View</span>
+      <div class="seg seg--light">
+        <button type="button" class="is-active" data-view="cards" aria-pressed="true">Cards</button>
+        <button type="button" data-view="accordion" aria-pressed="false">List</button>
+      </div>
+    </div>
   </div>
 
+  <div id="spacesCards">
   <!-- detail panel (desktop) -->
   <div class="space-panel reveal-img" id="spacePanel" aria-live="polite">
     <div class="space-panel__media">
@@ -140,6 +148,9 @@
 
   <!-- selector card grid -->
   <div class="space-grid" id="spaceGrid"><!-- cards injected --></div>
+  </div><!-- /spacesCards -->
+
+  <div class="space-accordion" id="spacesAccordion" hidden><!-- rows injected --></div>
 </section>
 
 <!-- ================= ARCHITECTURE ================= -->
