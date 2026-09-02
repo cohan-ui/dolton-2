@@ -108,6 +108,15 @@
       heroCta: "Enquire Now",
       overviewHead: "Where the water meets the city, a new stage for Sydney\u2019s most considered events.",
       overviewIntro: "Positioned on the waterfront at the centre of Darling Harbour\u2019s convention and tourism precinct, Harbourside brings together six purpose-built spaces, a landscaped rooftop garden and more than 55 years of Doltone House event delivery.",
+      bizOverline: "Business Centre",
+      bizHead: "One venue, configured around your program.",
+      bizRows: [
+        "Independent or connected space use across all six spaces",
+        "Conferences, seminars, executive meetings and workshops",
+        "Operable walls and adaptable staging",
+        "Audio-visual, lighting, production and rigging support",
+        "Breakout spaces, green rooms and delegate arrival"
+      ],
       lensTitle: "Seen through the lens of business events.",
       lensCards: [
         { img: "assets/img/lens-conference.jpg", alt: "Conference plenary in the Horizon space", t: "Conferences & keynotes", d: "Plenary in Horizon, breakouts across Sol and Cove, delegate arrival through Lyra." },
@@ -126,6 +135,15 @@
       heroCta: "Plan Your Wedding",
       overviewHead: "A day of your own, on the water.",
       overviewIntro: "Opening in 2027 on the Darling Harbour waterfront, Harbourside pairs a landmark setting with more than 55 years of Doltone House wedding experience. From first arrival to last dance, every detail is planned with you \u2014 the setting, the styling, the food and the flow of the day.",
+      bizOverline: "Your Wedding Day",
+      bizHead: "One venue, shaped around your day.",
+      bizRows: [
+        "Ceremony, reception and after-party across connected spaces",
+        "A dedicated wedding specialist from first enquiry to the day itself",
+        "Menus designed with you \u2014 tastings, cultural menus and family recipes",
+        "Styling, florals, lighting and production handled in-house",
+        "Bridal suite, guest arrival and waterfront photo locations"
+      ],
       lensTitle: "Your wedding at Harbourside.",
       lensCards: [
         { img: "assets/img/lens-wedding-arrival.jpg", alt: "A couple leaving through applauding guests and falling petals at the venue entrance", t: "The arrival", d: "Guests welcomed off the waterfront promenade as the harbour turns gold." },
@@ -144,6 +162,15 @@
       heroCta: "Plan Your Celebration",
       overviewHead: "Occasions worth gathering for.",
       overviewIntro: "Opening in 2027 on the Darling Harbour waterfront, Harbourside offers flexible spaces for celebrations of every scale \u2014 from intimate dinners to milestone parties \u2014 backed by more than 55 years of Doltone House hospitality, food and service.",
+      bizOverline: "Celebrations",
+      bizHead: "One venue, set for the occasion.",
+      bizRows: [
+        "Private dining through to full-floor parties across all six spaces",
+        "Birthdays, anniversaries, engagements and cultural celebrations",
+        "Operable walls and adaptable staging",
+        "Entertainment, audio-visual and production support in-house",
+        "Late finishes, guest arrival and transport on the doorstep"
+      ],
       lensTitle: "Your celebration at Harbourside.",
       lensCards: [
         { img: "assets/img/lens-conference.jpg", alt: "A milestone dinner in the Horizon space", t: "Birthdays & milestones", d: "Rooms that scale from an intimate dinner to a full-floor party." },
@@ -534,6 +561,9 @@
     heroCta: document.getElementById("heroCta"),
     overviewHead: document.getElementById("overviewHead"),
     overviewIntro: document.getElementById("overviewIntro"),
+    bizOverline: document.getElementById("bizOverline"),
+    bizHead: document.getElementById("bizHead"),
+    bizList: document.getElementById("bizList"),
     enquireHead: document.getElementById("enquireHead"),
     enquireSub: document.getElementById("enquireSub"),
     enquireCta: document.getElementById("enquireCta"),
@@ -568,6 +598,9 @@
         card.querySelector("[data-lens-title]").textContent = V.lensCards[i].t;
         card.querySelector("[data-lens-desc]").textContent = V.lensCards[i].d;
       });
+      variantEls.bizOverline.textContent = V.bizOverline;
+      variantEls.bizHead.textContent = V.bizHead;
+      variantEls.bizList.querySelectorAll("li .t").forEach((t, i) => { t.textContent = V.bizRows[i]; });
       variantEls.enquireHead.textContent = V.enquireHead;
       variantEls.enquireSub.textContent = V.enquireSub;
       variantEls.enquireCta.textContent = V.enquireCta;
@@ -587,6 +620,7 @@
       variantEls.heroLede, ...document.querySelectorAll('[data-hero="actions"] .btn'),
       variantEls.overviewHead, variantEls.overviewIntro,
       lensTitle, lensCards,
+      variantEls.bizOverline, variantEls.bizHead, variantEls.bizList,
       variantEls.enquireHead, variantEls.enquireSub,
       variantEls.enquireCta, variantEls.enquireCta2
     ];
